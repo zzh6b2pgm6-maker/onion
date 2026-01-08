@@ -98,13 +98,19 @@ body {
     transform: translateX(-50%);
     text-align: center;
     z-index: 10;
+    background: rgba(10, 24, 40, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: 1px solid rgba(224, 244, 255, 0.15);
 }
 
 .mystery p {
     font-size: 14px;
-    color: rgba(224, 244, 255, 0.5);
+    color: rgba(224, 244, 255, 0.85);
     font-style: italic;
     letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* Mobile Responsive */

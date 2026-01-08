@@ -32,15 +32,17 @@ class Bubble {
         this.text = text;
         this.x = x || Math.random() * canvas.width;
         this.y = y || Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 2; // Random velocity
-        this.vy = (Math.random() - 0.5) * 2;
-        this.radius = 40 + Math.random() * 30;
+        this.vx = (Math.random() - 0.5) * 1.5; // Slower, more graceful
+        this.vy = (Math.random() - 0.5) * 1.5;
+        this.radius = 50 + Math.random() * 40; // Larger bubbles
         this.hashtags = this.extractHashtags(text);
         this.birthTime = Date.now();
         this.opacity = 1;
         this.merged = false;
         this.connections = [];
         this.hue = Math.random() * 60 + 180; // Blue-cyan range
+        this.pulse = Math.random() * Math.PI * 2; // For pulsing animation
+        this.mergeFlash = 0; // Flash effect when merging
     }
 
     extractHashtags(text) {
@@ -61,6 +63,14 @@ class Bubble {
         if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) {
             this.vy *= -1;
             this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
+        }
+
+        // Pulsing animation
+        this.pulse += 0.02;
+
+        // Decay merge flash
+        if (this.mergeFlash > 0) {
+            this.mergeFlash *= 0.95;
         }
 
         // Rule 3: Fade over time
@@ -100,6 +110,10 @@ class Bubble {
                 // Reset fade time on successful merge
                 this.birthTime = Date.now();
                 other.birthTime = Date.now();
+
+                // Add visual flash effect
+                this.mergeFlash = 1;
+                other.mergeFlash = 1;
             }
         } else {
             // Bounce apart
@@ -130,48 +144,69 @@ class Bubble {
         ctx.save();
         ctx.globalAlpha = this.opacity;
 
-        // Draw connections
-        ctx.strokeStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity * 0.3})`;
-        ctx.lineWidth = 2;
+        // Draw connections with pulsing animation
         this.connections.forEach(other => {
             if (other.opacity > 0) {
+                const pulseValue = Math.sin(this.pulse) * 0.3 + 0.7;
+                ctx.strokeStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity * 0.5 * pulseValue})`;
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.lineDashOffset = -this.pulse * 5;
                 ctx.beginPath();
                 ctx.moveTo(this.x, this.y);
                 ctx.lineTo(other.x, other.y);
                 ctx.stroke();
+                ctx.setLineDash([]);
             }
         });
 
-        // Draw bubble
+        // Pulsing size effect
+        const pulseSize = Math.sin(this.pulse) * 3;
+        const currentRadius = this.radius + pulseSize;
+
+        // Outer glow (merge flash or connection glow)
+        if (this.mergeFlash > 0 || this.connections.length > 0) {
+            const glowStrength = Math.max(this.mergeFlash, this.connections.length * 0.15);
+            ctx.shadowBlur = 30 * glowStrength;
+            ctx.shadowColor = `hsla(${this.hue}, 100%, 70%, ${glowStrength})`;
+        }
+
+        // Draw bubble with enhanced gradient
         const gradient = ctx.createRadialGradient(
-            this.x - this.radius * 0.3,
-            this.y - this.radius * 0.3,
+            this.x - currentRadius * 0.3,
+            this.y - currentRadius * 0.3,
             0,
             this.x,
             this.y,
-            this.radius
+            currentRadius
         );
-        gradient.addColorStop(0, `hsla(${this.hue}, 70%, 80%, ${this.opacity * 0.8})`);
-        gradient.addColorStop(0.7, `hsla(${this.hue}, 70%, 60%, ${this.opacity * 0.6})`);
-        gradient.addColorStop(1, `hsla(${this.hue}, 70%, 40%, ${this.opacity * 0.4})`);
+        gradient.addColorStop(0, `hsla(${this.hue}, 80%, 85%, ${this.opacity * 0.9})`);
+        gradient.addColorStop(0.5, `hsla(${this.hue}, 75%, 65%, ${this.opacity * 0.7})`);
+        gradient.addColorStop(1, `hsla(${this.hue}, 70%, 45%, ${this.opacity * 0.5})`);
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
         ctx.fill();
 
-        // Outline
-        ctx.strokeStyle = `hsla(${this.hue}, 70%, 90%, ${this.opacity * 0.5})`;
+        // Enhanced outline
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = `hsla(${this.hue}, 80%, 95%, ${this.opacity * 0.6})`;
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Draw text
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.9})`;
-        ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
+        // Draw text with shadow for readability
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 1;
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.95})`;
+        ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        const maxWidth = this.radius * 1.6;
+        const maxWidth = currentRadius * 1.5;
         const words = this.text.split(' ');
         const lines = [];
         let currentLine = '';
@@ -188,7 +223,7 @@ class Bubble {
         });
         if (currentLine) lines.push(currentLine);
 
-        const lineHeight = 16;
+        const lineHeight = 18;
         const startY = this.y - ((lines.length - 1) * lineHeight) / 2;
         lines.forEach((line, i) => {
             ctx.fillText(line, this.x, startY + i * lineHeight);
@@ -198,10 +233,39 @@ class Bubble {
     }
 }
 
+// Background particles for depth
+const particles = [];
+for (let i = 0; i < 50; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.3 + 0.1
+    });
+}
+
 // Animation loop
 function animate() {
-    ctx.fillStyle = 'rgba(10, 24, 40, 0.1)';
+    ctx.fillStyle = 'rgba(10, 24, 40, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw background particles
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        ctx.fillStyle = `rgba(224, 244, 255, ${p.opacity})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+    });
 
     // Update all bubbles (Rule 1 & 3)
     bubbles.forEach(bubble => bubble.update());

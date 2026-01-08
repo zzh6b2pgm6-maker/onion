@@ -31,7 +31,7 @@ body {
 .container {
     max-width: 900px;
     margin: 0 auto;
-    padding: 60px 40px;
+    padding: 0 40px 60px;
     background: white;
     box-shadow: 0 0 60px rgba(0, 0, 0, 0.08);
 }
@@ -39,7 +39,7 @@ body {
 /* Header */
 .header {
     text-align: center;
-    padding: 40px 20px 60px;
+    padding: 30px 20px 50px;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 50px;
 }
@@ -82,11 +82,14 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: 0;
-    padding: 15px 20px;
+    padding: 12px 20px;
     background: var(--darker-cream);
-    border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 40px;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Controls */
@@ -376,7 +379,11 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 40px 25px;
+        padding: 0 25px 40px;
+    }
+
+    .header {
+        padding: 25px 20px 40px;
     }
 
     .title {
@@ -390,14 +397,14 @@ body {
     }
 
     .category-nav {
-        padding: 12px 10px;
+        padding: 10px 10px;
         gap: 0;
     }
 
     .filter-btn {
         font-size: 0.7em;
-        padding: 8px 12px;
-        letter-spacing: 1px;
+        padding: 8px 10px;
+        letter-spacing: 0.8px;
     }
 
     .controls {
@@ -438,7 +445,11 @@ body {
 
 @media (max-width: 480px) {
     .container {
-        padding: 30px 20px;
+        padding: 0 20px 30px;
+    }
+
+    .header {
+        padding: 20px 15px 35px;
     }
 
     .title {
@@ -451,12 +462,12 @@ body {
     }
 
     .category-nav {
-        padding: 10px 5px;
+        padding: 8px 5px;
     }
 
     .filter-btn {
-        font-size: 0.65em;
-        padding: 6px 8px;
+        font-size: 0.6em;
+        padding: 6px 7px;
         letter-spacing: 0.5px;
     }
 

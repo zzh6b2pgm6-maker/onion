@@ -1,5 +1,5 @@
 // ============================================
-// TIDE POOL - Three Simple Rules
+// TIDE POOL 3D - Three Simple Rules in Space
 // ============================================
 // Rule 1: Random drift
 // Rule 2: Collision → hashtag match → merge/bounce
@@ -23,26 +23,48 @@ window.addEventListener('resize', resizeCanvas);
 // State
 const bubbles = [];
 let mergeCount = 0;
-const FADE_TIME = 30000; // 30 seconds
-const MATCH_THRESHOLD = 0.5; // 50% hashtag overlap needed
+const FADE_TIME = 30000;
+const MATCH_THRESHOLD = 0.5;
 
-// Bubble class
+// Camera system
+const camera = {
+    x: 0,
+    y: 0,
+    z: -500,
+    targetX: 0,
+    targetY: 0,
+    targetZ: -500,
+    lockedBubble: null,
+    fov: 800,
+    speed: 0.05
+};
+
+// Mouse/touch controls
+let isDragging = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+
+// Bubble class with 3D
 class Bubble {
-    constructor(text, x, y) {
+    constructor(text, x, y, z) {
         this.text = text;
-        this.x = x || Math.random() * canvas.width;
-        this.y = y || Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 1.5; // Slower, more graceful
-        this.vy = (Math.random() - 0.5) * 1.5;
-        this.radius = 50 + Math.random() * 40; // Larger bubbles
+        // Spawn in 3D space
+        this.x = x !== undefined ? x : (Math.random() - 0.5) * 2000;
+        this.y = y !== undefined ? y : (Math.random() - 0.5) * 2000;
+        this.z = z !== undefined ? z : (Math.random() - 0.5) * 2000;
+
+        this.vx = (Math.random() - 0.5) * 1;
+        this.vy = (Math.random() - 0.5) * 1;
+        this.vz = (Math.random() - 0.5) * 1;
+
+        this.radius = 50 + Math.random() * 40;
         this.hashtags = this.extractHashtags(text);
         this.birthTime = Date.now();
         this.opacity = 1;
-        this.merged = false;
         this.connections = [];
-        this.hue = Math.random() * 60 + 180; // Blue-cyan range
-        this.pulse = Math.random() * Math.PI * 2; // For pulsing animation
-        this.mergeFlash = 0; // Flash effect when merging
+        this.hue = Math.random() * 60 + 180;
+        this.pulse = Math.random() * Math.PI * 2;
+        this.mergeFlash = 0;
     }
 
     extractHashtags(text) {
@@ -50,134 +72,146 @@ class Bubble {
         return matches ? matches.map(tag => tag.toLowerCase()) : [];
     }
 
-    // Rule 1: Random drift
     update() {
+        // 3D drift
         this.x += this.vx;
         this.y += this.vy;
+        this.z += this.vz;
 
-        // Bounce off walls
-        if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
-            this.vx *= -1;
-            this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
-        }
-        if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) {
-            this.vy *= -1;
-            this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
-        }
+        // Wrap around space
+        const boundary = 1500;
+        if (Math.abs(this.x) > boundary) this.x = -this.x * 0.9;
+        if (Math.abs(this.y) > boundary) this.y = -this.y * 0.9;
+        if (Math.abs(this.z) > boundary) this.z = -this.z * 0.9;
 
-        // Pulsing animation
         this.pulse += 0.02;
+        if (this.mergeFlash > 0) this.mergeFlash *= 0.95;
 
-        // Decay merge flash
-        if (this.mergeFlash > 0) {
-            this.mergeFlash *= 0.95;
-        }
-
-        // Rule 3: Fade over time
+        // Fade over time
         const age = Date.now() - this.birthTime;
-        const fadeStart = FADE_TIME * (1 + this.connections.length * 0.5); // Popular bubbles last longer
+        const fadeStart = FADE_TIME * (1 + this.connections.length * 0.5);
         if (age > fadeStart) {
             this.opacity = Math.max(0, 1 - (age - fadeStart) / FADE_TIME);
         }
     }
 
-    // Rule 2: Check collision
-    collidesWith(other) {
+    // 3D distance
+    distanceTo(other) {
         const dx = this.x - other.x;
         const dy = this.y - other.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        return distance < this.radius + other.radius;
+        const dz = this.z - other.z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
-    // Rule 2: Match hashtags
+    collidesWith(other) {
+        return this.distanceTo(other) < (this.radius + other.radius);
+    }
+
     matchScore(other) {
         if (this.hashtags.length === 0 || other.hashtags.length === 0) return 0;
         const matches = this.hashtags.filter(tag => other.hashtags.includes(tag));
         return matches.length / Math.max(this.hashtags.length, other.hashtags.length);
     }
 
-    // Rule 2: Merge or bounce
     interact(other) {
         const score = this.matchScore(other);
 
         if (score >= MATCH_THRESHOLD) {
-            // Merge - form connection
             if (!this.connections.includes(other)) {
                 this.connections.push(other);
                 other.connections.push(this);
                 mergeCount++;
-
-                // Reset fade time on successful merge
                 this.birthTime = Date.now();
                 other.birthTime = Date.now();
-
-                // Add visual flash effect
                 this.mergeFlash = 1;
                 other.mergeFlash = 1;
             }
         } else {
-            // Bounce apart
+            // 3D bounce
             const dx = this.x - other.x;
             const dy = this.y - other.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const dz = this.z - other.z;
+            const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
             const nx = dx / distance;
             const ny = dy / distance;
+            const nz = dz / distance;
 
-            // Simple elastic collision
             this.vx += nx * 0.5;
             this.vy += ny * 0.5;
+            this.vz += nz * 0.5;
             other.vx -= nx * 0.5;
             other.vy -= ny * 0.5;
-
-            // Separate bubbles
-            const overlap = (this.radius + other.radius) - distance;
-            this.x += nx * overlap * 0.5;
-            this.y += ny * overlap * 0.5;
-            other.x -= nx * overlap * 0.5;
-            other.y -= ny * overlap * 0.5;
+            other.vz -= nz * 0.5;
         }
+    }
+
+    // Project 3D to 2D
+    project() {
+        const dx = this.x - camera.x;
+        const dy = this.y - camera.y;
+        const dz = this.z - camera.z;
+
+        if (dz <= 0) return null; // Behind camera
+
+        const scale = camera.fov / dz;
+        return {
+            x: canvas.width / 2 + dx * scale,
+            y: canvas.height / 2 + dy * scale,
+            radius: this.radius * scale,
+            distance: dz,
+            scale: scale
+        };
     }
 
     draw() {
         if (this.opacity <= 0) return;
 
-        ctx.save();
-        ctx.globalAlpha = this.opacity;
+        const proj = this.project();
+        if (!proj || proj.radius < 1) return;
 
-        // Draw connections with pulsing animation
+        ctx.save();
+
+        // Fade based on distance
+        const distanceOpacity = Math.min(1, 1000 / proj.distance);
+        ctx.globalAlpha = this.opacity * distanceOpacity;
+
+        // Draw connections
         this.connections.forEach(other => {
             if (other.opacity > 0) {
-                const pulseValue = Math.sin(this.pulse) * 0.3 + 0.7;
-                ctx.strokeStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity * 0.5 * pulseValue})`;
-                ctx.lineWidth = 3;
-                ctx.setLineDash([5, 5]);
-                ctx.lineDashOffset = -this.pulse * 5;
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y);
-                ctx.lineTo(other.x, other.y);
-                ctx.stroke();
-                ctx.setLineDash([]);
+                const otherProj = other.project();
+                if (otherProj) {
+                    const pulseValue = Math.sin(this.pulse) * 0.3 + 0.7;
+                    ctx.strokeStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity * 0.5 * pulseValue * distanceOpacity})`;
+                    ctx.lineWidth = Math.max(1, 3 * proj.scale);
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineDashOffset = -this.pulse * 5;
+                    ctx.beginPath();
+                    ctx.moveTo(proj.x, proj.y);
+                    ctx.lineTo(otherProj.x, otherProj.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
             }
         });
 
-        // Pulsing size effect
+        // Pulsing size
         const pulseSize = Math.sin(this.pulse) * 3;
-        const currentRadius = this.radius + pulseSize;
+        const currentRadius = proj.radius + pulseSize * proj.scale;
 
-        // Outer glow (merge flash or connection glow)
+        // Glow effect
         if (this.mergeFlash > 0 || this.connections.length > 0) {
             const glowStrength = Math.max(this.mergeFlash, this.connections.length * 0.15);
-            ctx.shadowBlur = 30 * glowStrength;
+            ctx.shadowBlur = 30 * glowStrength * proj.scale;
             ctx.shadowColor = `hsla(${this.hue}, 100%, 70%, ${glowStrength})`;
         }
 
-        // Draw bubble with enhanced gradient
+        // Draw bubble
         const gradient = ctx.createRadialGradient(
-            this.x - currentRadius * 0.3,
-            this.y - currentRadius * 0.3,
+            proj.x - currentRadius * 0.3,
+            proj.y - currentRadius * 0.3,
             0,
-            this.x,
-            this.y,
+            proj.x,
+            proj.y,
             currentRadius
         );
         gradient.addColorStop(0, `hsla(${this.hue}, 80%, 85%, ${this.opacity * 0.9})`);
@@ -186,91 +220,113 @@ class Bubble {
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
+        ctx.arc(proj.x, proj.y, currentRadius, 0, Math.PI * 2);
         ctx.fill();
 
-        // Enhanced outline
+        // Outline
         ctx.shadowBlur = 0;
         ctx.strokeStyle = `hsla(${this.hue}, 80%, 95%, ${this.opacity * 0.6})`;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = Math.max(1, 2 * proj.scale);
         ctx.stroke();
 
-        // Draw text with shadow for readability
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 1;
+        // Text (only if close enough)
+        if (proj.distance < 800 && currentRadius > 20) {
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 4;
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.95})`;
 
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.95})`;
-        ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+            const fontSize = Math.max(10, Math.min(20, 14 * proj.scale));
+            ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-        const maxWidth = currentRadius * 1.5;
-        const words = this.text.split(' ');
-        const lines = [];
-        let currentLine = '';
+            const maxWidth = currentRadius * 1.5;
+            const words = this.text.split(' ');
+            const lines = [];
+            let currentLine = '';
 
-        words.forEach(word => {
-            const testLine = currentLine ? `${currentLine} ${word}` : word;
-            const metrics = ctx.measureText(testLine);
-            if (metrics.width > maxWidth && currentLine) {
-                lines.push(currentLine);
-                currentLine = word;
-            } else {
-                currentLine = testLine;
-            }
-        });
-        if (currentLine) lines.push(currentLine);
+            words.forEach(word => {
+                const testLine = currentLine ? `${currentLine} ${word}` : word;
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            });
+            if (currentLine) lines.push(currentLine);
 
-        const lineHeight = 18;
-        const startY = this.y - ((lines.length - 1) * lineHeight) / 2;
-        lines.forEach((line, i) => {
-            ctx.fillText(line, this.x, startY + i * lineHeight);
-        });
+            const lineHeight = fontSize * 1.3;
+            const startY = proj.y - ((lines.length - 1) * lineHeight) / 2;
+            lines.forEach((line, i) => {
+                ctx.fillText(line, proj.x, startY + i * lineHeight);
+            });
+        }
 
         ctx.restore();
     }
 }
 
-// Background particles for depth
+// Background particles
 const particles = [];
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 100; i++) {
     particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
+        x: (Math.random() - 0.5) * 3000,
+        y: (Math.random() - 0.5) * 3000,
+        z: (Math.random() - 0.5) * 3000,
         radius: Math.random() * 2 + 1,
         opacity: Math.random() * 0.3 + 0.1
     });
 }
 
+// Update camera
+function updateCamera() {
+    if (camera.lockedBubble && camera.lockedBubble.opacity > 0) {
+        // Follow locked bubble
+        camera.targetX = camera.lockedBubble.x;
+        camera.targetY = camera.lockedBubble.y;
+        camera.targetZ = camera.lockedBubble.z - 300;
+    }
+
+    // Smooth camera movement
+    camera.x += (camera.targetX - camera.x) * camera.speed;
+    camera.y += (camera.targetY - camera.y) * camera.speed;
+    camera.z += (camera.targetZ - camera.z) * camera.speed;
+}
+
 // Animation loop
 function animate() {
-    ctx.fillStyle = 'rgba(10, 24, 40, 0.15)';
+    ctx.fillStyle = 'rgba(10, 24, 40, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw background particles
+    updateCamera();
+
+    // Draw particles
     particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
+        const dx = p.x - camera.x;
+        const dy = p.y - camera.y;
+        const dz = p.z - camera.z;
 
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+        if (dz > 0) {
+            const scale = camera.fov / dz;
+            const x = canvas.width / 2 + dx * scale;
+            const y = canvas.height / 2 + dy * scale;
+            const radius = p.radius * scale;
 
-        ctx.fillStyle = `rgba(224, 244, 255, ${p.opacity})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
+            if (radius > 0.5) {
+                ctx.fillStyle = `rgba(224, 244, 255, ${p.opacity * Math.min(1, 500 / dz)})`;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
     });
 
-    // Update all bubbles (Rule 1 & 3)
+    // Update bubbles
     bubbles.forEach(bubble => bubble.update());
 
-    // Check collisions (Rule 2)
+    // Check collisions
     for (let i = 0; i < bubbles.length; i++) {
         for (let j = i + 1; j < bubbles.length; j++) {
             if (bubbles[i].collidesWith(bubbles[j])) {
@@ -279,8 +335,16 @@ function animate() {
         }
     }
 
-    // Draw all bubbles
-    bubbles.forEach(bubble => bubble.draw());
+    // Sort by distance (draw far to near)
+    const visibleBubbles = bubbles.filter(b => b.opacity > 0);
+    visibleBubbles.sort((a, b) => {
+        const distA = Math.sqrt((a.x - camera.x) ** 2 + (a.y - camera.y) ** 2 + (a.z - camera.z) ** 2);
+        const distB = Math.sqrt((b.x - camera.x) ** 2 + (b.y - camera.y) ** 2 + (b.z - camera.z) ** 2);
+        return distB - distA;
+    });
+
+    // Draw bubbles
+    visibleBubbles.forEach(bubble => bubble.draw());
 
     // Remove faded bubbles
     for (let i = bubbles.length - 1; i >= 0; i--) {
@@ -296,25 +360,129 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-// Drop a thought
+// Controls
+canvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+
+        camera.targetX -= dx * 2;
+        camera.targetY -= dy * 2;
+
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+        camera.lockedBubble = null;
+    }
+});
+
+canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+
+canvas.addEventListener('click', (e) => {
+    if (isDragging) return;
+
+    // Find clicked bubble
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    let closest = null;
+    let closestDist = Infinity;
+
+    bubbles.forEach(bubble => {
+        const proj = bubble.project();
+        if (proj) {
+            const dist = Math.sqrt((proj.x - x) ** 2 + (proj.y - y) ** 2);
+            if (dist < proj.radius && dist < closestDist) {
+                closest = bubble;
+                closestDist = dist;
+            }
+        }
+    });
+
+    if (closest) {
+        camera.lockedBubble = camera.lockedBubble === closest ? null : closest;
+    } else {
+        camera.lockedBubble = null;
+    }
+});
+
+// Keyboard controls
+document.addEventListener('keydown', (e) => {
+    const speed = 50;
+    if (e.key === 'w' || e.key === 'W') camera.targetZ += speed;
+    if (e.key === 's' || e.key === 'S') camera.targetZ -= speed;
+    if (e.key === 'a' || e.key === 'A') camera.targetX -= speed;
+    if (e.key === 'd' || e.key === 'D') camera.targetX += speed;
+    if (e.key === 'q' || e.key === 'Q') camera.targetY -= speed;
+    if (e.key === 'e' || e.key === 'E') camera.targetY += speed;
+    if (e.key === 'Escape') camera.lockedBubble = null;
+});
+
+// Touch controls
+canvas.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+        isDragging = true;
+        lastMouseX = e.touches[0].clientX;
+        lastMouseY = e.touches[0].clientY;
+    }
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    if (isDragging && e.touches.length === 1) {
+        const dx = e.touches[0].clientX - lastMouseX;
+        const dy = e.touches[0].clientY - lastMouseY;
+
+        camera.targetX -= dx * 2;
+        camera.targetY -= dy * 2;
+
+        lastMouseX = e.touches[0].clientX;
+        lastMouseY = e.touches[0].clientY;
+        camera.lockedBubble = null;
+    }
+});
+
+canvas.addEventListener('touchend', () => {
+    isDragging = false;
+});
+
+// Mouse wheel zoom
+canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    camera.targetZ += e.deltaY * 0.5;
+});
+
+// Drop thought
 function dropThought() {
     const text = input.value.trim();
     if (!text) return;
 
-    const bubble = new Bubble(text);
+    // Spawn near camera
+    const bubble = new Bubble(
+        text,
+        camera.x + (Math.random() - 0.5) * 200,
+        camera.y + (Math.random() - 0.5) * 200,
+        camera.z + 500 + Math.random() * 100
+    );
     bubbles.push(bubble);
 
     input.value = '';
     input.focus();
 }
 
-// Event listeners
 dropButton.addEventListener('click', dropThought);
 input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') dropThought();
 });
 
-// Start some initial bubbles
+// Initial bubbles
 const starters = [
     'exploring new ideas #creativity #innovation',
     'what makes us human #philosophy #consciousness',
@@ -328,10 +496,8 @@ starters.forEach(text => {
     bubbles.push(new Bubble(text));
 });
 
-// Start animation
+// Start
 animate();
 
-// Console message
-console.log('%c🌊 Tide Pool', 'font-size: 20px; color: #4a9eff; font-weight: bold;');
-console.log('%cWatch thoughts find each other', 'font-size: 14px; color: #2a7ad1; font-style: italic;');
-console.log('%c\nThree simple rules:\n1. Drift randomly\n2. Touch → match hashtags → merge/bounce\n3. Fade over time', 'color: #e0f4ff;');
+console.log('%c🌊 Tide Pool 3D', 'font-size: 20px; color: #4a9eff; font-weight: bold;');
+console.log('%cNavigate: Click+Drag or WASD keys | Click bubble to lock | Scroll to zoom', 'color: #e0f4ff;');

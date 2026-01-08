@@ -26,17 +26,22 @@ let mergeCount = 0;
 const FADE_TIME = 30000;
 const MATCH_THRESHOLD = 0.5;
 
-// Camera system
+// Camera system with momentum
 const camera = {
     x: 0,
     y: 0,
-    z: -500,
+    z: -2000, // Start farther back
+    vx: 0,
+    vy: 0,
+    vz: 0,
     targetX: 0,
     targetY: 0,
-    targetZ: -500,
+    targetZ: -2000,
     lockedBubble: null,
-    fov: 800,
-    speed: 0.05
+    fov: 1000,
+    speed: 0.08,
+    acceleration: 2,
+    friction: 0.92
 };
 
 // Mouse/touch controls
@@ -48,16 +53,16 @@ let lastMouseY = 0;
 class Bubble {
     constructor(text, x, y, z) {
         this.text = text;
-        // Spawn in 3D space
-        this.x = x !== undefined ? x : (Math.random() - 0.5) * 2000;
-        this.y = y !== undefined ? y : (Math.random() - 0.5) * 2000;
-        this.z = z !== undefined ? z : (Math.random() - 0.5) * 2000;
+        // Spawn across much larger space
+        this.x = x !== undefined ? x : (Math.random() - 0.5) * 5000;
+        this.y = y !== undefined ? y : (Math.random() - 0.5) * 5000;
+        this.z = z !== undefined ? z : Math.random() * 5000;
 
-        this.vx = (Math.random() - 0.5) * 1;
-        this.vy = (Math.random() - 0.5) * 1;
-        this.vz = (Math.random() - 0.5) * 1;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.vz = (Math.random() - 0.5) * 0.5;
 
-        this.radius = 50 + Math.random() * 40;
+        this.radius = 80 + Math.random() * 60; // Bigger base size
         this.hashtags = this.extractHashtags(text);
         this.birthTime = Date.now();
         this.opacity = 1;
@@ -229,8 +234,8 @@ class Bubble {
         ctx.lineWidth = Math.max(1, 2 * proj.scale);
         ctx.stroke();
 
-        // Text (only if close enough)
-        if (proj.distance < 800 && currentRadius > 20) {
+        // Text (only if very close)
+        if (proj.distance < 400 && currentRadius > 30) {
             ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
             ctx.shadowBlur = 4;
             ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.95})`;
@@ -280,19 +285,45 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
-// Update camera
+// Keyboard state
+const keys = {};
+document.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
+document.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+
+// Update camera with momentum
 function updateCamera() {
     if (camera.lockedBubble && camera.lockedBubble.opacity > 0) {
-        // Follow locked bubble
+        // Smoothly follow locked bubble
         camera.targetX = camera.lockedBubble.x;
         camera.targetY = camera.lockedBubble.y;
-        camera.targetZ = camera.lockedBubble.z - 300;
-    }
+        camera.targetZ = camera.lockedBubble.z - 500;
 
-    // Smooth camera movement
-    camera.x += (camera.targetX - camera.x) * camera.speed;
-    camera.y += (camera.targetY - camera.y) * camera.speed;
-    camera.z += (camera.targetZ - camera.z) * camera.speed;
+        camera.x += (camera.targetX - camera.x) * 0.05;
+        camera.y += (camera.targetY - camera.y) * 0.05;
+        camera.z += (camera.targetZ - camera.z) * 0.05;
+    } else {
+        // Free flight with momentum
+        if (keys['w']) camera.vz += camera.acceleration;
+        if (keys['s']) camera.vz -= camera.acceleration;
+        if (keys['a']) camera.vx -= camera.acceleration;
+        if (keys['d']) camera.vx += camera.acceleration;
+        if (keys['q']) camera.vy -= camera.acceleration;
+        if (keys['e']) camera.vy += camera.acceleration;
+        if (keys['shift']) { // Speed boost
+            if (keys['w']) camera.vz += camera.acceleration * 2;
+            if (keys['s']) camera.vz -= camera.acceleration * 2;
+        }
+
+        // Apply velocity
+        camera.x += camera.vx;
+        camera.y += camera.vy;
+        camera.z += camera.vz;
+
+        // Apply friction
+        camera.vx *= camera.friction;
+        camera.vy *= camera.friction;
+        camera.vz *= camera.friction;
+    }
 }
 
 // Animation loop
@@ -372,8 +403,9 @@ canvas.addEventListener('mousemove', (e) => {
         const dx = e.clientX - lastMouseX;
         const dy = e.clientY - lastMouseY;
 
-        camera.targetX -= dx * 2;
-        camera.targetY -= dy * 2;
+        // Apply rotational movement
+        camera.vx -= dx * 0.5;
+        camera.vy -= dy * 0.5;
 
         lastMouseX = e.clientX;
         lastMouseY = e.clientY;
@@ -414,16 +446,20 @@ canvas.addEventListener('click', (e) => {
     }
 });
 
-// Keyboard controls
+// Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-    const speed = 50;
-    if (e.key === 'w' || e.key === 'W') camera.targetZ += speed;
-    if (e.key === 's' || e.key === 'S') camera.targetZ -= speed;
-    if (e.key === 'a' || e.key === 'A') camera.targetX -= speed;
-    if (e.key === 'd' || e.key === 'D') camera.targetX += speed;
-    if (e.key === 'q' || e.key === 'Q') camera.targetY -= speed;
-    if (e.key === 'e' || e.key === 'E') camera.targetY += speed;
-    if (e.key === 'Escape') camera.lockedBubble = null;
+    if (e.key === 'Escape') {
+        camera.lockedBubble = null;
+        camera.vx = 0;
+        camera.vy = 0;
+        camera.vz = 0;
+    }
+    if (e.key === ' ') { // Spacebar to stop
+        e.preventDefault();
+        camera.vx *= 0.5;
+        camera.vy *= 0.5;
+        camera.vz *= 0.5;
+    }
 });
 
 // Touch controls
@@ -437,39 +473,41 @@ canvas.addEventListener('touchstart', (e) => {
 
 canvas.addEventListener('touchmove', (e) => {
     if (isDragging && e.touches.length === 1) {
+        e.preventDefault();
         const dx = e.touches[0].clientX - lastMouseX;
         const dy = e.touches[0].clientY - lastMouseY;
 
-        camera.targetX -= dx * 2;
-        camera.targetY -= dy * 2;
+        camera.vx -= dx * 0.5;
+        camera.vy -= dy * 0.5;
 
         lastMouseX = e.touches[0].clientX;
         lastMouseY = e.touches[0].clientY;
         camera.lockedBubble = null;
     }
-});
+}, { passive: false });
 
 canvas.addEventListener('touchend', () => {
     isDragging = false;
 });
 
-// Mouse wheel zoom
+// Mouse wheel zoom with momentum
 canvas.addEventListener('wheel', (e) => {
     e.preventDefault();
-    camera.targetZ += e.deltaY * 0.5;
-});
+    camera.vz += e.deltaY * 0.3;
+}, { passive: false });
 
 // Drop thought
 function dropThought() {
     const text = input.value.trim();
     if (!text) return;
 
-    // Spawn near camera
+    // Spawn ahead of camera in direction of travel
+    const spawnDistance = 800;
     const bubble = new Bubble(
         text,
-        camera.x + (Math.random() - 0.5) * 200,
-        camera.y + (Math.random() - 0.5) * 200,
-        camera.z + 500 + Math.random() * 100
+        camera.x + (Math.random() - 0.5) * 300,
+        camera.y + (Math.random() - 0.5) * 300,
+        camera.z + spawnDistance + Math.random() * 200
     );
     bubbles.push(bubble);
 
@@ -482,7 +520,7 @@ input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') dropThought();
 });
 
-// Initial bubbles
+// Initial bubbles scattered throughout space
 const starters = [
     'exploring new ideas #creativity #innovation',
     'what makes us human #philosophy #consciousness',
@@ -490,6 +528,20 @@ const starters = [
     'art and expression #creativity #art',
     'finding meaning in chaos #philosophy #meaning',
     'building something beautiful #innovation #design',
+    'wandering through the void #space #exploration',
+    'thoughts drift like stars #cosmic #wonder',
+    'digital consciousness emerging #ai #mind',
+    'patterns in the darkness #discovery #insight',
+    'echoes of distant voices #connection #community',
+    'floating through infinity #journey #adventure',
+    'seeking understanding #philosophy #knowledge',
+    'beauty in simplicity #minimalism #design',
+    'the art of letting go #mindfulness #peace',
+    'creating from nothing #creativity #making',
+    'dreams take flight #imagination #possibility',
+    'questions without answers #curiosity #mystery',
+    'moments of clarity #insight #wisdom',
+    'endless possibilities ahead #future #hope'
 ];
 
 starters.forEach(text => {
@@ -499,5 +551,8 @@ starters.forEach(text => {
 // Start
 animate();
 
-console.log('%c🌊 Tide Pool 3D', 'font-size: 20px; color: #4a9eff; font-weight: bold;');
-console.log('%cNavigate: Click+Drag or WASD keys | Click bubble to lock | Scroll to zoom', 'color: #e0f4ff;');
+console.log('%c🌊 Tide Pool - Space Explorer', 'font-size: 20px; color: #4a9eff; font-weight: bold;');
+console.log('%cControls:', 'font-size: 14px; color: #00ff88;');
+console.log('%c  WASD - Fly through space | Q/E - Up/Down | Shift - Speed boost', 'color: #e0f4ff;');
+console.log('%c  Mouse - Drag to pan | Scroll - Zoom | Click bubble - Lock on', 'color: #e0f4ff;');
+console.log('%c  Space - Brake | Escape - Unlock & stop', 'color: #e0f4ff;');

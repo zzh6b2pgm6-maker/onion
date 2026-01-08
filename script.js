@@ -170,7 +170,7 @@ window.addEventListener('load', () => {
     }, 100);
 });
 
-// Console easter egg
-console.log('%c🚀 Welcome to The Quantum Chippy! 🚀', 'font-size: 20px; color: #00ffff; font-weight: bold;');
-console.log('%cServing Britain\'s finest since 2525', 'font-size: 14px; color: #00ff88; font-style: italic;');
-console.log('%c\nKeyboard shortcuts:\n- Press "/" to focus search\n- Press "Escape" to clear search', 'color: #8891b0;');
+// Console message
+console.log('%c✦ The Crown & Crumpet ✦', 'font-size: 20px; color: #c9a961; font-weight: bold;');
+console.log('%cFine British Cuisine - Est. 1885', 'font-size: 14px; color: #8b7355; font-style: italic;');
+console.log('%c\nKeyboard shortcuts:\n- Press "/" to focus search\n- Press "Escape" to clear search', 'color: #666666;');

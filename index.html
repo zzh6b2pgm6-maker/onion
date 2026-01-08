@@ -3,38 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Quantum Chippy - Futuristic British Diner</title>
+    <title>The Crown & Crumpet - Fine British Dining</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="stars"></div>
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1 class="title">The Quantum Chippy</h1>
-            <p class="subtitle">A Futuristic British Diner</p>
-            <p class="tagline">Where Tradition Meets Tomorrow</p>
+            <div class="ornament">✦</div>
+            <h1 class="title">The Crown & Crumpet</h1>
+            <p class="subtitle">Fine British Cuisine</p>
+            <p class="tagline">Where Heritage Meets Excellence</p>
+            <div class="ornament">✦</div>
         </header>
 
         <!-- Search and Filter Controls -->
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 Search menu items..." />
+                <input type="text" id="searchInput" placeholder="Search our menu..." />
             </div>
 
             <div class="filter-buttons">
-                <button class="filter-btn active" data-category="all">All Items</button>
+                <button class="filter-btn active" data-category="all">All</button>
                 <button class="filter-btn" data-category="breakfast">Breakfast</button>
-                <button class="filter-btn" data-category="mains">Mains</button>
-                <button class="filter-btn" data-category="comfort">Comfort Food</button>
-                <button class="filter-btn" data-category="light">Light Selections</button>
+                <button class="filter-btn" data-category="mains">Main Courses</button>
+                <button class="filter-btn" data-category="comfort">Classics</button>
+                <button class="filter-btn" data-category="light">Lighter Fare</button>
                 <button class="filter-btn" data-category="desserts">Desserts</button>
-                <button class="filter-btn" data-category="snacks">Snacks & Sides</button>
+                <button class="filter-btn" data-category="snacks">Accompaniments</button>
             </div>
 
             <div class="dietary-filters">
-                <label><input type="checkbox" id="vegetarian"> 🌱 Vegetarian Friendly</label>
-                <label><input type="checkbox" id="sortPrice"> 💷 Sort by Price</label>
+                <label><input type="checkbox" id="vegetarian"> Vegetarian</label>
+                <label><input type="checkbox" id="sortPrice"> Sort by Price</label>
             </div>
         </div>
 
@@ -42,8 +46,8 @@
         <main class="menu">
             <!-- Breakfast Section -->
             <section class="menu-section" data-category="breakfast">
-                <h2 class="section-title">🍳 BREAKFAST PROTOCOLS</h2>
-                <p class="section-time">Activated Daily: 07:00 - 11:00 Galactic Standard Time</p>
+                <h2 class="section-title">Breakfast</h2>
+                <p class="section-time">Served Daily: 7:00 AM - 11:00 AM</p>
 
                 <div class="menu-item" data-price="14.50" data-name="Full English Mk. IV">
                     <div class="item-header">
@@ -65,7 +69,7 @@
 
                 <div class="menu-item" data-price="6.95" data-name="Porridge Pod" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Porridge Pod <span class="badge veg">🌱</span></h3>
+                        <h3>Porridge Pod <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.95</span>
                     </div>
                     <p class="description">Scottish oats slow-cooked in zero-gravity chamber. Topped with honey drizzle and berry compote</p>
@@ -82,7 +86,7 @@
 
             <!-- Mains Section -->
             <section class="menu-section" data-category="mains">
-                <h2 class="section-title">🥧 MAINS ARRAY</h2>
+                <h2 class="section-title">Main Courses</h2>
 
                 <div class="menu-item" data-price="15.95" data-name="Fish & Chips Classic">
                     <div class="item-header">
@@ -142,7 +146,7 @@
 
                 <div class="menu-item" data-price="11.50" data-name="Ploughman's Lunch Matrix" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Ploughman's Lunch Matrix <span class="badge veg">🌱</span></h3>
+                        <h3>Ploughman's Lunch Matrix <span class="badge veg">(V)</span></h3>
                         <span class="price">£11.50</span>
                     </div>
                     <p class="description">Artisan cheddar, crusty bread, pickled onions, branston pickle. Heritage tomatoes, celery, and apple slices</p>
@@ -151,7 +155,7 @@
 
             <!-- Comfort Food Section -->
             <section class="menu-section" data-category="comfort">
-                <h2 class="section-title">🍲 COMFORT PROTOCOLS</h2>
+                <h2 class="section-title">British Classics</h2>
 
                 <div class="menu-item" data-price="13.50" data-name="Cottage Pie">
                     <div class="item-header">
@@ -179,7 +183,7 @@
 
                 <div class="menu-item" data-price="9.95" data-name="Bubble & Squeak Cakes" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Bubble & Squeak Cakes <span class="badge veg">🌱</span></h3>
+                        <h3>Bubble & Squeak Cakes <span class="badge veg">(V)</span></h3>
                         <span class="price">£9.95</span>
                     </div>
                     <p class="description">Pan-fried leftover vegetables with poached eggs. Hollandaise sauce drizzle</p>
@@ -188,7 +192,7 @@
 
             <!-- Light Selections Section -->
             <section class="menu-section" data-category="light">
-                <h2 class="section-title">🥗 LIGHTER SELECTIONS</h2>
+                <h2 class="section-title">Lighter Fare</h2>
 
                 <div class="menu-item" data-price="10.95" data-name="Coronation Chicken Salad">
                     <div class="item-header">
@@ -208,7 +212,7 @@
 
                 <div class="menu-item" data-price="7.95" data-name="Welsh Rarebit" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Welsh Rarebit <span class="badge veg">🌱</span></h3>
+                        <h3>Welsh Rarebit <span class="badge veg">(V)</span></h3>
                         <span class="price">£7.95</span>
                     </div>
                     <p class="description">Premium cheddar sauce on toasted sourdough. Optional bacon upgrade (+£2.50)</p>
@@ -217,11 +221,11 @@
 
             <!-- Desserts Section -->
             <section class="menu-section" data-category="desserts">
-                <h2 class="section-title">🍰 PUDDINGS & DESSERTS</h2>
+                <h2 class="section-title">Desserts</h2>
 
                 <div class="menu-item" data-price="6.95" data-name="Sticky Toffee Pudding" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Sticky Toffee Pudding <span class="badge veg">🌱</span></h3>
+                        <h3>Sticky Toffee Pudding <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.95</span>
                     </div>
                     <p class="description">Warm sponge cake with toffee sauce. Vanilla ice cream or custard</p>
@@ -229,7 +233,7 @@
 
                 <div class="menu-item" data-price="6.50" data-name="Eton Mess Sphere" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Eton Mess Sphere <span class="badge veg">🌱</span></h3>
+                        <h3>Eton Mess Sphere <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.50</span>
                     </div>
                     <p class="description">Meringue, strawberries, and cream in edible dome</p>
@@ -237,7 +241,7 @@
 
                 <div class="menu-item" data-price="6.50" data-name="Bread & Butter Pudding" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Bread & Butter Pudding <span class="badge veg">🌱</span></h3>
+                        <h3>Bread & Butter Pudding <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.50</span>
                     </div>
                     <p class="description">Classic comfort dessert with vanilla custard</p>
@@ -245,7 +249,7 @@
 
                 <div class="menu-item" data-price="6.95" data-name="Trifle Tower" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Trifle Tower <span class="badge veg">🌱</span></h3>
+                        <h3>Trifle Tower <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.95</span>
                     </div>
                     <p class="description">Layers of sponge, jelly, custard, fruit, and cream</p>
@@ -253,7 +257,7 @@
 
                 <div class="menu-item" data-price="6.95" data-name="Apple Crumble à la Mode" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Apple Crumble à la Mode <span class="badge veg">🌱</span></h3>
+                        <h3>Apple Crumble à la Mode <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.95</span>
                     </div>
                     <p class="description">Bramley apples with oat crumble topping. Served warm with ice cream or custard</p>
@@ -261,7 +265,7 @@
 
                 <div class="menu-item" data-price="6.50" data-name="Spotted Dick" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Spotted Dick <span class="badge veg">🌱</span></h3>
+                        <h3>Spotted Dick <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.50</span>
                     </div>
                     <p class="description">Traditional suet pudding with currants. Served with custard</p>
@@ -269,7 +273,7 @@
 
                 <div class="menu-item" data-price="6.95" data-name="Treacle Tart" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Treacle Tart <span class="badge veg">🌱</span></h3>
+                        <h3>Treacle Tart <span class="badge veg">(V)</span></h3>
                         <span class="price">£6.95</span>
                     </div>
                     <p class="description">Sweet pastry with golden syrup filling. Clotted cream on the side</p>
@@ -278,11 +282,11 @@
 
             <!-- Snacks & Sides Section -->
             <section class="menu-section" data-category="snacks">
-                <h2 class="section-title">🥨 SNACKS & SIDES</h2>
+                <h2 class="section-title">Accompaniments</h2>
 
                 <div class="menu-item" data-price="4.50" data-name="Chip Shop Chips" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Chip Shop Chips <span class="badge veg">🌱</span></h3>
+                        <h3>Chip Shop Chips <span class="badge veg">(V)</span></h3>
                         <span class="price">£4.50</span>
                     </div>
                     <p class="description">Triple-cooked, served with salt & vinegar</p>
@@ -290,7 +294,7 @@
 
                 <div class="menu-item" data-price="4.95" data-name="Onion Rings" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Onion Rings <span class="badge veg">🌱</span></h3>
+                        <h3>Onion Rings <span class="badge veg">(V)</span></h3>
                         <span class="price">£4.95</span>
                     </div>
                     <p class="description">Beer-battered and crispy</p>
@@ -314,7 +318,7 @@
 
                 <div class="menu-item" data-price="3.50" data-name="Cheese & Onion Crisps" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Cheese & Onion Crisps <span class="badge veg">🌱</span></h3>
+                        <h3>Cheese & Onion Crisps <span class="badge veg">(V)</span></h3>
                         <span class="price">£3.50</span>
                     </div>
                     <p class="description">House-made, served warm</p>
@@ -322,7 +326,7 @@
 
                 <div class="menu-item" data-price="3.95" data-name="Pickled Eggs" data-vegetarian="true">
                     <div class="item-header">
-                        <h3>Pickled Eggs <span class="badge veg">🌱</span></h3>
+                        <h3>Pickled Eggs <span class="badge veg">(V)</span></h3>
                         <span class="price">£3.95</span>
                     </div>
                     <p class="description">Traditional pub fare (3 pieces)</p>
@@ -348,10 +352,12 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>🌱 Vegetarian options available | 🌿 Vegan modifications upon request</p>
-            <p>⚠️ Gluten-free alternatives available | 🔬 All ingredients molecularly certified</p>
-            <p class="tagline-footer">The Quantum Chippy - Serving Britain's finest since 2525</p>
-            <p class="motto">"Keep Calm and Beam On"</p>
+            <div class="footer-divider"></div>
+            <p class="dietary-note">Vegetarian and vegan options available upon request</p>
+            <p class="dietary-note">Gluten-free alternatives available</p>
+            <p class="dietary-note">Please inform our staff of any dietary requirements or allergies</p>
+            <div class="ornament footer-ornament">✦</div>
+            <p class="establishment">Est. 1885</p>
         </footer>
     </div>
 

@@ -1,20 +1,20 @@
-# The Quantum Chippy - Interactive Menu
+# The Crown & Crumpet - Interactive Menu
 
-A futuristic British diner menu with interactive search and filtering capabilities.
+An elegant fine-dining British restaurant menu with interactive search and filtering capabilities.
 
 ## 🚀 Features
 
 - **Interactive Search** - Real-time search across all menu items and descriptions
-- **Category Filtering** - Filter by Breakfast, Mains, Comfort Food, Light Selections, Desserts, or Snacks
+- **Category Filtering** - Filter by Breakfast, Main Courses, Classics, Lighter Fare, Desserts, or Accompaniments
 - **Vegetarian Filter** - Show only vegetarian-friendly options
 - **Price Sorting** - Sort items by price (low to high)
 - **Responsive Design** - Works on desktop, tablet, and mobile devices
-- **Futuristic Theme** - Dark theme with neon accents and animations
+- **Elegant Design** - Sophisticated Michelin-star aesthetic with classic typography and refined color palette
 
 ## 📁 Files
 
-- `index.html` - Main HTML structure
-- `styles.css` - Futuristic CSS styling
+- `index.html` - Main HTML structure with elegant layout
+- `styles.css` - Sophisticated CSS styling with Michelin-star aesthetics
 - `script.js` - Interactive JavaScript functionality
 - `MENU.md` - Original markdown menu
 
@@ -66,9 +66,9 @@ A futuristic British diner menu with interactive search and filtering capabiliti
 Edit `styles.css` variables at the top:
 ```css
 :root {
-    --primary-color: #00ffff;    /* Cyan */
-    --secondary-color: #ff00ff;  /* Magenta */
-    --accent-color: #00ff88;     /* Green */
+    --cream: #faf8f3;      /* Background */
+    --gold: #c9a961;       /* Accent */
+    --charcoal: #2c2c2c;   /* Text */
 }
 ```
 
@@ -77,7 +77,7 @@ Edit `index.html` and add items following this format:
 ```html
 <div class="menu-item" data-price="X.XX" data-name="Item Name" data-vegetarian="true">
     <div class="item-header">
-        <h3>Item Name <span class="badge veg">🌱</span></h3>
+        <h3>Item Name <span class="badge veg">(V)</span></h3>
         <span class="price">£X.XX</span>
     </div>
     <p class="description">Item description here</p>
@@ -111,6 +111,6 @@ Free to use and modify for your restaurant or project!
 
 ---
 
-**The Quantum Chippy** - *Serving Britain's finest since 2525*
+**The Crown & Crumpet** - *Fine British Cuisine*
 
-*"Keep Calm and Beam On"* 🚀
+*Est. 1885*

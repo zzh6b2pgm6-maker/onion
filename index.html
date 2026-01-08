@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Quantum Chippy - Futuristic British Diner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">The Quantum Chippy</h1>
+            <p class="subtitle">A Futuristic British Diner</p>
+            <p class="tagline">Where Tradition Meets Tomorrow</p>
+        </header>
+
+        <!-- Search and Filter Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search menu items..." />
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">All Items</button>
+                <button class="filter-btn" data-category="breakfast">Breakfast</button>
+                <button class="filter-btn" data-category="mains">Mains</button>
+                <button class="filter-btn" data-category="comfort">Comfort Food</button>
+                <button class="filter-btn" data-category="light">Light Selections</button>
+                <button class="filter-btn" data-category="desserts">Desserts</button>
+                <button class="filter-btn" data-category="snacks">Snacks & Sides</button>
+            </div>
+
+            <div class="dietary-filters">
+                <label><input type="checkbox" id="vegetarian"> 🌱 Vegetarian Friendly</label>
+                <label><input type="checkbox" id="sortPrice"> 💷 Sort by Price</label>
+            </div>
+        </div>
+
+        <!-- Menu Sections -->
+        <main class="menu">
+            <!-- Breakfast Section -->
+            <section class="menu-section" data-category="breakfast">
+                <h2 class="section-title">🍳 BREAKFAST PROTOCOLS</h2>
+                <p class="section-time">Activated Daily: 07:00 - 11:00 Galactic Standard Time</p>
+
+                <div class="menu-item" data-price="14.50" data-name="Full English Mk. IV">
+                    <div class="item-header">
+                        <h3>Full English Mk. IV</h3>
+                        <span class="price">£14.50</span>
+                    </div>
+                    <p class="description">Traditional fry-up enhanced with molecular gastronomy</p>
+                    <ul class="ingredients">
+                        <li>Quantum-grilled bacon strips</li>
+                        <li>Free-range hover eggs (poached, fried, or scrambled)</li>
+                        <li>Heritage pork sausages with herb micro-capsules</li>
+                        <li>Grilled tomato halves with basil essence</li>
+                        <li>Button mushrooms in garlic nano-foam</li>
+                        <li>Baked beans in quantum sauce</li>
+                        <li>Black pudding crisps</li>
+                        <li>Sourdough toast with cultured butter</li>
+                    </ul>
+                </div>
+
+                <div class="menu-item" data-price="6.95" data-name="Porridge Pod" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Porridge Pod <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.95</span>
+                    </div>
+                    <p class="description">Scottish oats slow-cooked in zero-gravity chamber. Topped with honey drizzle and berry compote</p>
+                </div>
+
+                <div class="menu-item" data-price="9.50" data-name="Kedgeree Station">
+                    <div class="item-header">
+                        <h3>Kedgeree Station</h3>
+                        <span class="price">£9.50</span>
+                    </div>
+                    <p class="description">Smoked haddock, rice, curry spices, and soft-boiled eggs. Served in an edible bowl</p>
+                </div>
+            </section>
+
+            <!-- Mains Section -->
+            <section class="menu-section" data-category="mains">
+                <h2 class="section-title">🥧 MAINS ARRAY</h2>
+
+                <div class="menu-item" data-price="15.95" data-name="Fish & Chips Classic">
+                    <div class="item-header">
+                        <h3>Fish & Chips Classic</h3>
+                        <span class="price">£15.95</span>
+                    </div>
+                    <p class="description">Beer-battered North Sea cod with triple-cooked chips. Mushy peas, tartare sauce, lemon wedge</p>
+                </div>
+
+                <div class="menu-item" data-price="13.50" data-name="Bangers & Mash Deluxe">
+                    <div class="item-header">
+                        <h3>Bangers & Mash Deluxe</h3>
+                        <span class="price">£13.50</span>
+                    </div>
+                    <p class="description">Premium Cumberland sausages on cloud-whipped potatoes. Rich onion gravy with caramelized shallots</p>
+                </div>
+
+                <div class="menu-item" data-price="14.95" data-name="Shepherd's Pie 2.0">
+                    <div class="item-header">
+                        <h3>Shepherd's Pie 2.0</h3>
+                        <span class="price">£14.95</span>
+                    </div>
+                    <p class="description">Slow-braised lamb in herb gravy. Topped with Maris Piper mash and aged cheddar crust</p>
+                </div>
+
+                <div class="menu-item" data-price="13.95" data-name="Chicken Tikka Masala">
+                    <div class="item-header">
+                        <h3>Chicken Tikka Masala</h3>
+                        <span class="price">£13.95</span>
+                    </div>
+                    <p class="description">Britain's adopted classic - tender chicken in creamy tomato sauce. Served with pilau rice and naan bread</p>
+                </div>
+
+                <div class="menu-item" data-price="24.95" data-name="Beef Wellington Capsule">
+                    <div class="item-header">
+                        <h3>Beef Wellington Capsule</h3>
+                        <span class="price">£24.95</span>
+                    </div>
+                    <p class="description">Prime beef fillet wrapped in mushroom duxelles and puff pastry. Served with seasonal vegetables and red wine jus</p>
+                </div>
+
+                <div class="menu-item" data-price="12.50" data-name="Toad in the Hole">
+                    <div class="item-header">
+                        <h3>Toad in the Hole</h3>
+                        <span class="price">£12.50</span>
+                    </div>
+                    <p class="description">Yorkshire sausages baked in crispy Yorkshire pudding. Onion gravy and garden peas</p>
+                </div>
+
+                <div class="menu-item" data-price="10.95" data-name="Cornish Pasty Deluxe">
+                    <div class="item-header">
+                        <h3>Cornish Pasty Deluxe</h3>
+                        <span class="price">£10.95</span>
+                    </div>
+                    <p class="description">Hand-crimped pastry filled with beef, potato, swede, and onion. Served with piccalilli and mixed salad</p>
+                </div>
+
+                <div class="menu-item" data-price="11.50" data-name="Ploughman's Lunch Matrix" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Ploughman's Lunch Matrix <span class="badge veg">🌱</span></h3>
+                        <span class="price">£11.50</span>
+                    </div>
+                    <p class="description">Artisan cheddar, crusty bread, pickled onions, branston pickle. Heritage tomatoes, celery, and apple slices</p>
+                </div>
+            </section>
+
+            <!-- Comfort Food Section -->
+            <section class="menu-section" data-category="comfort">
+                <h2 class="section-title">🍲 COMFORT PROTOCOLS</h2>
+
+                <div class="menu-item" data-price="13.50" data-name="Cottage Pie">
+                    <div class="item-header">
+                        <h3>Cottage Pie</h3>
+                        <span class="price">£13.50</span>
+                    </div>
+                    <p class="description">Minced beef in rich gravy beneath fluffy mashed potato</p>
+                </div>
+
+                <div class="menu-item" data-price="15.95" data-name="Steak & Kidney Pie">
+                    <div class="item-header">
+                        <h3>Steak & Kidney Pie</h3>
+                        <span class="price">£15.95</span>
+                    </div>
+                    <p class="description">Slow-cooked in ale gravy, encased in shortcrust pastry. Served with mash and seasonal greens</p>
+                </div>
+
+                <div class="menu-item" data-price="14.50" data-name="Lancashire Hotpot">
+                    <div class="item-header">
+                        <h3>Lancashire Hotpot</h3>
+                        <span class="price">£14.50</span>
+                    </div>
+                    <p class="description">Layered lamb, onions, and sliced potatoes. Slow-cooked to perfection</p>
+                </div>
+
+                <div class="menu-item" data-price="9.95" data-name="Bubble & Squeak Cakes" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Bubble & Squeak Cakes <span class="badge veg">🌱</span></h3>
+                        <span class="price">£9.95</span>
+                    </div>
+                    <p class="description">Pan-fried leftover vegetables with poached eggs. Hollandaise sauce drizzle</p>
+                </div>
+            </section>
+
+            <!-- Light Selections Section -->
+            <section class="menu-section" data-category="light">
+                <h2 class="section-title">🥗 LIGHTER SELECTIONS</h2>
+
+                <div class="menu-item" data-price="10.95" data-name="Coronation Chicken Salad">
+                    <div class="item-header">
+                        <h3>Coronation Chicken Salad</h3>
+                        <span class="price">£10.95</span>
+                    </div>
+                    <p class="description">Curried chicken mayo with sultanas on mixed greens</p>
+                </div>
+
+                <div class="menu-item" data-price="8.95" data-name="Scotch Egg Trio">
+                    <div class="item-header">
+                        <h3>Scotch Egg Trio</h3>
+                        <span class="price">£8.95</span>
+                    </div>
+                    <p class="description">Traditional pork, black pudding, and vegetarian varieties. Mustard aioli and house pickle</p>
+                </div>
+
+                <div class="menu-item" data-price="7.95" data-name="Welsh Rarebit" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Welsh Rarebit <span class="badge veg">🌱</span></h3>
+                        <span class="price">£7.95</span>
+                    </div>
+                    <p class="description">Premium cheddar sauce on toasted sourdough. Optional bacon upgrade (+£2.50)</p>
+                </div>
+            </section>
+
+            <!-- Desserts Section -->
+            <section class="menu-section" data-category="desserts">
+                <h2 class="section-title">🍰 PUDDINGS & DESSERTS</h2>
+
+                <div class="menu-item" data-price="6.95" data-name="Sticky Toffee Pudding" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Sticky Toffee Pudding <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.95</span>
+                    </div>
+                    <p class="description">Warm sponge cake with toffee sauce. Vanilla ice cream or custard</p>
+                </div>
+
+                <div class="menu-item" data-price="6.50" data-name="Eton Mess Sphere" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Eton Mess Sphere <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.50</span>
+                    </div>
+                    <p class="description">Meringue, strawberries, and cream in edible dome</p>
+                </div>
+
+                <div class="menu-item" data-price="6.50" data-name="Bread & Butter Pudding" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Bread & Butter Pudding <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.50</span>
+                    </div>
+                    <p class="description">Classic comfort dessert with vanilla custard</p>
+                </div>
+
+                <div class="menu-item" data-price="6.95" data-name="Trifle Tower" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Trifle Tower <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.95</span>
+                    </div>
+                    <p class="description">Layers of sponge, jelly, custard, fruit, and cream</p>
+                </div>
+
+                <div class="menu-item" data-price="6.95" data-name="Apple Crumble à la Mode" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Apple Crumble à la Mode <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.95</span>
+                    </div>
+                    <p class="description">Bramley apples with oat crumble topping. Served warm with ice cream or custard</p>
+                </div>
+
+                <div class="menu-item" data-price="6.50" data-name="Spotted Dick" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Spotted Dick <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.50</span>
+                    </div>
+                    <p class="description">Traditional suet pudding with currants. Served with custard</p>
+                </div>
+
+                <div class="menu-item" data-price="6.95" data-name="Treacle Tart" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Treacle Tart <span class="badge veg">🌱</span></h3>
+                        <span class="price">£6.95</span>
+                    </div>
+                    <p class="description">Sweet pastry with golden syrup filling. Clotted cream on the side</p>
+                </div>
+            </section>
+
+            <!-- Snacks & Sides Section -->
+            <section class="menu-section" data-category="snacks">
+                <h2 class="section-title">🥨 SNACKS & SIDES</h2>
+
+                <div class="menu-item" data-price="4.50" data-name="Chip Shop Chips" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Chip Shop Chips <span class="badge veg">🌱</span></h3>
+                        <span class="price">£4.50</span>
+                    </div>
+                    <p class="description">Triple-cooked, served with salt & vinegar</p>
+                </div>
+
+                <div class="menu-item" data-price="4.95" data-name="Onion Rings" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Onion Rings <span class="badge veg">🌱</span></h3>
+                        <span class="price">£4.95</span>
+                    </div>
+                    <p class="description">Beer-battered and crispy</p>
+                </div>
+
+                <div class="menu-item" data-price="3.50" data-name="Pork Scratchings">
+                    <div class="item-header">
+                        <h3>Pork Scratchings</h3>
+                        <span class="price">£3.50</span>
+                    </div>
+                    <p class="description">Traditional pub snack</p>
+                </div>
+
+                <div class="menu-item" data-price="5.95" data-name="Mini Sausage Rolls">
+                    <div class="item-header">
+                        <h3>Mini Sausage Rolls</h3>
+                        <span class="price">£5.95</span>
+                    </div>
+                    <p class="description">Flaky pastry with seasoned pork</p>
+                </div>
+
+                <div class="menu-item" data-price="3.50" data-name="Cheese & Onion Crisps" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Cheese & Onion Crisps <span class="badge veg">🌱</span></h3>
+                        <span class="price">£3.50</span>
+                    </div>
+                    <p class="description">House-made, served warm</p>
+                </div>
+
+                <div class="menu-item" data-price="3.95" data-name="Pickled Eggs" data-vegetarian="true">
+                    <div class="item-header">
+                        <h3>Pickled Eggs <span class="badge veg">🌱</span></h3>
+                        <span class="price">£3.95</span>
+                    </div>
+                    <p class="description">Traditional pub fare (3 pieces)</p>
+                </div>
+
+                <div class="menu-item" data-price="7.95" data-name="Prawn Cocktail">
+                    <div class="item-header">
+                        <h3>Prawn Cocktail</h3>
+                        <span class="price">£7.95</span>
+                    </div>
+                    <p class="description">Atlantic prawns in Marie Rose sauce</p>
+                </div>
+
+                <div class="menu-item" data-price="6.95" data-name="Scampi Bites">
+                    <div class="item-header">
+                        <h3>Scampi Bites</h3>
+                        <span class="price">£6.95</span>
+                    </div>
+                    <p class="description">Breaded wholetail scampi with tartare sauce</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🌱 Vegetarian options available | 🌿 Vegan modifications upon request</p>
+            <p>⚠️ Gluten-free alternatives available | 🔬 All ingredients molecularly certified</p>
+            <p class="tagline-footer">The Quantum Chippy - Serving Britain's finest since 2525</p>
+            <p class="motto">"Keep Calm and Beam On"</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
